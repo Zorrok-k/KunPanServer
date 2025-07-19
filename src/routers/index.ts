@@ -3,6 +3,6 @@ import fileController from "@controllers/fileController";
 
 const router = express.Router();
 
-router.get("/file", fileController.get);
+router.get("/file/build", fileController.build);
 
 export default router;

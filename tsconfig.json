@@ -16,6 +16,9 @@
     "noUnusedParameters": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
+    // 装饰器支持
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
     "paths": {
       "@controllers/*": ["./src/controllers/*"],
       "@services/*": ["./src/services/*"],

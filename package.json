@@ -18,10 +18,14 @@
     "@routers": "./src/routers"
   },
   "dependencies": {
+    "better-sqlite3": "^11.10.0",
     "express": "^5.1.0",
-    "module-alias": "^2.2.3"
+    "module-alias": "^2.2.3",
+    "multer": "^2.0.2",
+    "typeorm": "^0.3.25"
   },
   "devDependencies": {
+    "@types/better-sqlite3": "^7.6.13",
     "@types/express": "^5.0.3",
     "@types/node": "^24.0.14",
     "tslib": "^2.8.1"
