@@ -1,31 +1,8 @@
 {
-  "compilerOptions": {
-    "target": "ES2020",
-    "esModuleInterop": true,
-    "module": "commonjs",
-    "declaration": true,
-    "sourceMap": true,
-    "outDir": "./dist",
-    "rootDir": "./src",
-    // "removeComments": true,
-    "importHelpers": true,
-    "isolatedModules": true,
-    "incremental": true,
-    "strict": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "noImplicitReturns": true,
-    "noFallthroughCasesInSwitch": true,
-    // 装饰器支持
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
-    "paths": {
-      "@controllers/*": ["./src/controllers/*"],
-      "@services/*": ["./src/services/*"],
-      "@entities/*": ["./src/entities/*"],
-      "@middlewares/*": ["./src/middlewares/*"],
-      "@models/*": ["./src/models/*"],
-      "@routes/*": ["./src/routes/*"]
-    }
-  }
+  "files": [],
+  "references": [
+    { "path": "./tsconfig.node.json" },
+    { "path": "./tsconfig.web.json" },
+    // { "path": "./tsconfig.server.json" }
+  ]
 }

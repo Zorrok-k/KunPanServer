@@ -2,7 +2,7 @@ import fs from "fs";
 import { join } from "path";
 import express from "express";
 import multer from "multer"; 
-import fileController from "@controllers/fileController";
+import fileController from "../controllers/fileController";
 
 const root = "D:";
 

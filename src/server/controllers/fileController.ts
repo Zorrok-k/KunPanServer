@@ -1,5 +1,5 @@
-import PanFileServiceImpl from "@services/implements/PanFileServiceImpl";
-import { PanFileService } from "@services/PanFileService";
+import PanFileServiceImpl from "../services/implements/PanFileServiceImpl";
+import { PanFileService } from "../services/PanFileService";
 
 class fileController {
   // 依赖注入

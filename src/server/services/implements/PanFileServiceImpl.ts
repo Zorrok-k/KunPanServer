@@ -1,6 +1,6 @@
 import fs from "fs";
 // import { PanFile } from "@entities/PanFile";
-import { PanFileService } from "@services/PanFileService";
+import { PanFileService } from "../PanFileService";
 
 class PanFileServiceImpl implements PanFileService {
   buildFileData(): boolean {

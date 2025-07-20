@@ -4,9 +4,9 @@ import { DataSource } from "typeorm";
 const DataBase = new DataSource({
   type: "better-sqlite3",
   // 需要生成的实体
-  entities: [join(__dirname, '../entities/*.ts')],
+  entities: [join(__dirname, '..src/server/entities/*.ts')],
   // 数据库路径
-  database: "src/models/db/KunPanServer.db",
+  database: "src/server/models/db/KunPanServer.db",
   // database: "./src/models/db/KunPanServer.db",
   // 自动同步表
   synchronize: true,
