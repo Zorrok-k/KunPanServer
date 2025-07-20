@@ -1,4 +1,4 @@
-import { PanFile } from "@entities/PanFile";
+// import { PanFile } from "@entities/PanFile";
 
 export interface PanFileService {
   // 扫描根目录建立文件数据库
@@ -9,5 +9,5 @@ export interface PanFileService {
   getFileDirectory(path: string, num: number, page: number): any;
 
   // 上传文件
-  // addFile()
+  addFile(path: string, files: File[]): boolean;
 }

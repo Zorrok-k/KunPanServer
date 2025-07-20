@@ -1,3 +1,4 @@
+import fs from "fs";
 // import { PanFile } from "@entities/PanFile";
 import { PanFileService } from "@services/PanFileService";
 
@@ -9,6 +10,18 @@ class PanFileServiceImpl implements PanFileService {
 
   getFileDirectory(_path: string, _num: number, _page: number): any {
     return "test";
+  }
+
+  addFile(path: string, files: File[]): boolean {
+    console.log(path + "\n");
+    
+    let filesDetails: any[] = [];
+    files.forEach((e) => {
+      filesDetails.push(fs.statSync(Object.assign(e).path));
+    });
+    console.log(filesDetails);
+
+    return true;
   }
 }
 

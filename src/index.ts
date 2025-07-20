@@ -1,6 +1,6 @@
 import "module-alias/register";
 import express from "express";
-import router from "@routers/index";
+import router from "@routes/index";
 import DataBase from "@models/index";
 
 // 初始化数据库

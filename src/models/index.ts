@@ -6,7 +6,8 @@ const DataBase = new DataSource({
   // 需要生成的实体
   entities: [join(__dirname, '../entities/*.ts')],
   // 数据库路径
-  database: "./db/KunPanServer.db",
+  database: "src/models/db/KunPanServer.db",
+  // database: "./src/models/db/KunPanServer.db",
   // 自动同步表
   synchronize: true,
   logging: ["error"],

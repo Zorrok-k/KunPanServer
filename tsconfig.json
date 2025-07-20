@@ -25,7 +25,7 @@
       "@entities/*": ["./src/entities/*"],
       "@middlewares/*": ["./src/middlewares/*"],
       "@models/*": ["./src/models/*"],
-      "@routers/*": ["./src/routers/*"]
+      "@routes/*": ["./src/routes/*"]
     }
   }
 }
