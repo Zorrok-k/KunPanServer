@@ -28,6 +28,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
+// 文件路由
 router.get("/file/build", fileController.build);
 router.post("/file/add", upload.array("normal"), fileController.add);
 

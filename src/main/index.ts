@@ -1,39 +1,8 @@
-import { app, shell, BrowserWindow } from 'electron'
-import { electronApp, optimizer, is } from '@electron-toolkit/utils'
-import { join } from 'path'
+import { app, ipcMain } from 'electron'
+import { WindowsManager } from './utils/WindowsManager'
+import { electronApp, optimizer } from '@electron-toolkit/utils'
 import expServer from '../server/index'
-
-function createWindow(): void {
-  // 创建浏览器窗口
-  const mainWindow = new BrowserWindow({
-    width: 900,
-    height: 670,
-    show: false,
-    autoHideMenuBar: true,
-    webPreferences: {
-      preload: join(__dirname, '../preload/index.js'),
-      sandbox: false
-    }
-  })
-
-  // 当窗口准备好后显示窗口
-  mainWindow.on('ready-to-show', () => {
-    mainWindow.show()
-  })
-
-  // 设置新窗口打开时的行为，使用默认浏览器打开外部链接
-  mainWindow.webContents.setWindowOpenHandler((details) => {
-    shell.openExternal(details.url)
-    return { action: 'deny' }
-  })
-
-  // 开发环境加载远程 URL，生产环境加载本地 HTML 文件
-  if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
-    mainWindow.loadURL(process.env['ELECTRON_RENDERER_URL'])
-  } else {
-    mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
-  }
-}
+import AppTray from './utils/appTray'
 
 // 当 Electron 初始化完成并准备好创建浏览器窗口时调用
 app.whenReady().then(() => {
@@ -45,9 +14,21 @@ app.whenReady().then(() => {
     optimizer.watchWindowShortcuts(window)
   })
 
-  // 启动服务器
-  expServer.init()
-  createWindow()
+  // 主进程
+  WindowsManager.getInstance().newWindow({
+    name: 'main',
+    url: '#/home',
+    width: 1280,
+    height: 720,
+    center: true
+  })
+  expServer.start()
+
+  ipcMain.handle('window-close', (_e, id) => {
+    console.log(id)
+    WindowsManager.getInstance().getWindow(id)!.hide()
+    new AppTray(app).init()
+  })
 })
 
 // 所有窗口关闭时退出程序

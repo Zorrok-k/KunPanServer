@@ -6,7 +6,7 @@ class server {
   baseUrl: string = 'http://127.0.0.1'
   port: number = 8100
 
-  init = () => {
+  start = () => {
     // 初始化数据库
     DataBase.initialize()
       .then(() => {
