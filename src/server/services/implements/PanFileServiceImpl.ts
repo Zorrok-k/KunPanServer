@@ -1,17 +1,12 @@
 import { DataSource } from 'typeorm'
 import { PanFileService } from '../PanFileService'
-// import fileMapper from '../../models/FIleMapper'
-import DataBase from '../../models'
+import expServer from '../../index'
 import { PanFile } from '../../entities/PanFile'
 import logger from '../../utils/logger'
 import { nanoid } from 'nanoid'
 
 class PanFileServiceImpl implements PanFileService {
-  dataBase: DataSource
-
-  constructor() {
-    this.dataBase = DataBase
-  }
+  constructor() {}
 
   buildFileData(): boolean {
     console.log('创建文件数据库')
@@ -21,8 +16,9 @@ class PanFileServiceImpl implements PanFileService {
   getFileDirectory = (path: string, num: number, page: number): any => {
     // 计算分页参数
     const skip = (page - 1) * num
-    this.dataBase
-      .getRepository(PanFile)
+    expServer
+      .getInstance()
+      .Database.getRepository(PanFile)
       .createQueryBuilder()
       .skip(skip)
       .take(num)
@@ -44,8 +40,9 @@ class PanFileServiceImpl implements PanFileService {
       const file = Object.assign(new PanFile(), JSON.parse(e))
       console.log(file)
       file.id = nanoid(16)
-      this.dataBase.manager
-        .save(file, { entity: PanFile })
+      expServer
+        .getInstance()
+        .Database.manager.save(file, { entity: PanFile })
         .then(() => {
           logger.info(`[PanFile] 新增一条记录：`)
           console.log(file)

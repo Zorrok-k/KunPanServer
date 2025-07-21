@@ -1,17 +1,16 @@
 import fs from 'fs'
-import { join } from 'path'
+import { resolve } from 'path'
 import express from 'express'
 import multer from 'multer'
 import fileController from '../controllers/fileController'
-
-const root = 'D:'
+import Settings from '../../main/settings'
 
 const router = express.Router()
 
 const storage = multer.diskStorage({
   destination: (req, _file, cb) => {
     // 从 req 中获取路径信息 path记得设置一下默认为root
-    const path = join(root, (req.query.path as string) || '')
+    const path = resolve(Settings.getInstance().server.root, (req.query.path as string) || '')
 
     // 自动创建目录
     if (!fs.existsSync(path)) {
