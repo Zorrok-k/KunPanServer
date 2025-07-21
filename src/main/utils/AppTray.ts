@@ -1,7 +1,6 @@
 import { Tray, Menu, App } from 'electron'
 import { WindowsManager } from './WindowsManager'
 import icon from '../../../resources/icon.png?asset'
-import { log } from 'node:console'
 
 class AppTray {
   app: App
@@ -15,7 +14,6 @@ class AppTray {
         label: '打开主窗口',
         click: () => {
           const window = WindowsManager.getInstance()
-          console.log(window.windowsMap)
           window.getWindow(window.winModuleMap.get('main')!.id)?.show()
         }
       },
@@ -27,7 +25,7 @@ class AppTray {
       }
     ])
 
-    this.tray.setToolTip('My App')
+    this.tray.setToolTip('KunPan')
     this.tray.setContextMenu(contextMenu)
   }
 }

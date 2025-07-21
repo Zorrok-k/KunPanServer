@@ -1,8 +1,8 @@
 import { app, ipcMain } from 'electron'
-import { WindowsManager } from './utils/WindowsManager'
 import { electronApp, optimizer } from '@electron-toolkit/utils'
+import { WindowsManager } from './utils/WindowsManager'
 import expServer from '../server/index'
-import AppTray from './utils/appTray'
+import AppTray from './utils/AppTray'
 
 // 当 Electron 初始化完成并准备好创建浏览器窗口时调用
 app.whenReady().then(() => {
@@ -22,12 +22,12 @@ app.whenReady().then(() => {
     height: 720,
     center: true
   })
+  // 创建系统托盘
+  new AppTray(app).init()
   expServer.start()
 
   ipcMain.handle('window-close', (_e, id) => {
-    console.log(id)
     WindowsManager.getInstance().getWindow(id)!.hide()
-    new AppTray(app).init()
   })
 })
 

@@ -2,6 +2,7 @@ import { BrowserWindow, ipcMain, shell } from 'electron'
 import { is } from '@electron-toolkit/utils'
 import icon from '../../../resources/icon.png?asset'
 import { join } from 'path'
+import logger from '../../server/utils/logger'
 
 export type winOptions = {
   /**
@@ -59,16 +60,8 @@ export class WindowsManager {
         id: this.window.id,
         name: this.options.name
       }
+      logger.info(`[WindowsManager] 发送窗口信息：id-${info.id}  name-${info.name} `)
       return info
-    })
-    // 等待渲染进程加载完毕
-    ipcMain.handle('renderer-ready', () => {
-      console.log('[主进程] 渲染进程加载完毕，窗口显示')
-      // 如果是开发环境打开开发者工具
-      if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
-        this.window.webContents.openDevTools({ mode: 'undocked' })
-      }
-      this.window.show()
     })
   }
 
@@ -117,8 +110,17 @@ export class WindowsManager {
     this.window = window
 
     // 窗口生命周期
-    window.on('ready-to-show', () => {
-      console.log('[主进程] 窗口已准备好显示')
+    window.on('ready-to-show', async () => {
+      logger.info(`[WindowsManager] 窗口就绪`)
+      // window.show()
+    })
+
+    window.webContents.on('did-finish-load', () => {
+      logger.info(`[WindowsManager] 渲染进程就绪`)
+      // 如果是开发环境打开开发者工具
+      if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
+        this.window.webContents.openDevTools({ mode: 'undocked' })
+      }
     })
 
     window.on('close', () => {
@@ -143,6 +145,7 @@ export class WindowsManager {
     }
 
     //将窗口信息存储到map
+    logger.info(`[WindowsManager] 已创建窗口实例：${window.id}--${options.name}--${options.url}`)
     this.windowsMap.set(window.id, window)
     this.winModuleMap.set(options.name, { id: window.id, url: options.url || '' })
 
@@ -150,6 +153,7 @@ export class WindowsManager {
   }
 
   getWindow = (id: number) => {
+    logger.info(`[WindowsManager] 获取窗口实例：${id}`)
     return this.windowsMap.get(id)
   }
 

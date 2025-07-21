@@ -19,7 +19,6 @@ onMounted(() => {
     console.log(msg)
     id.value = msg.id
   })
-  window.api.rendererReady()
 })
 </script>
 
