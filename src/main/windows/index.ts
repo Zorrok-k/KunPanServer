@@ -60,7 +60,7 @@ export class WindowsManager {
         id: this.window.id,
         name: this.options.name
       }
-      logger.info(`[WindowsManager] 发送窗口信息：id-${info.id}  name-${info.name} `)
+      logger.info(`[WindowsManager] 发送窗口信息：{id：${info.id},name：${info.name}} `)
       return info
     })
   }
@@ -112,11 +112,12 @@ export class WindowsManager {
     // 窗口生命周期
     window.on('ready-to-show', async () => {
       logger.info(`[WindowsManager] 窗口就绪`)
+      console.log('\n')
       // window.show()
     })
 
     window.webContents.on('did-finish-load', () => {
-      logger.info(`[WindowsManager] 渲染进程就绪`)
+      logger.info(`[WindowsManager] 渲染就绪`)
       // 如果是开发环境打开开发者工具
       if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
         this.window.webContents.openDevTools({ mode: 'undocked' })
@@ -145,7 +146,9 @@ export class WindowsManager {
     }
 
     //将窗口信息存储到map
-    logger.info(`[WindowsManager] 已创建窗口实例：${window.id}--${options.name}--${options.url}`)
+    logger.info(
+      `[WindowsManager] 已创建窗口实例：{id：${window.id},name：${options.name},url：${options.url}}`
+    )
     this.windowsMap.set(window.id, window)
     this.winModuleMap.set(options.name, { id: window.id, url: options.url || '' })
 

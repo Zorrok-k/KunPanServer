@@ -1,10 +1,21 @@
-import fs from 'fs/promises' // 使用 promises 版本
+import fs from 'fs'
 import { resolve } from 'path'
 import logger from '../../server/utils/logger'
 import { app } from 'electron'
 import { server, path } from './default' // 假设你导出的是普通对象
 
 const SETTINGS_DIR = resolve(app.getAppPath(), 'resources/settings')
+
+const pathArry = [
+  {
+    path: resolve(SETTINGS_DIR, 'server.json'),
+    json: server
+  },
+  {
+    path: resolve(SETTINGS_DIR, 'path.json'),
+    json: path
+  }
+]
 
 export default class Settings {
   static instance: Settings
@@ -20,42 +31,26 @@ export default class Settings {
   server: any
   path: any
 
-  init = async (): Promise<void> => {
+  init = async () => {
     try {
-      // 确保配置目录存在
-      await fs.mkdir(SETTINGS_DIR, { recursive: true })
-      logger.info(`[Setting] 创建配置目录：${SETTINGS_DIR}`)
-
-      const serverPath = resolve(SETTINGS_DIR, 'server.json')
-      const pathPath = resolve(SETTINGS_DIR, 'path.json')
-
-      // 检查 server.json 是否存在，不存在则写入默认值
-      try {
-        await fs.access(serverPath)
-      } catch {
-        await fs.writeFile(serverPath, JSON.stringify(server, null, 2), 'utf-8')
-        logger.info(`[Setting] 创建：${serverPath}`)
+      if (!fs.existsSync(SETTINGS_DIR)) {
+        fs.mkdirSync(SETTINGS_DIR, { recursive: true })
+        logger.info(`[Setting] 创建配置目录：${SETTINGS_DIR}`)
       }
 
-      // 检查 path.json 是否存在，不存在则写入默认值
-      try {
-        await fs.access(pathPath)
-      } catch {
-        await fs.writeFile(pathPath, JSON.stringify(path, null, 2), 'utf-8')
-        logger.info(`[Setting] 创建：${pathPath}`)
-      }
+      pathArry.forEach((e) => {
+        if (!fs.existsSync(e.path)) {
+          fs.writeFileSync(e.path, JSON.stringify(e.json, null, 2), 'utf-8')
+          logger.info(`[Setting] 创建：${e.path}`)
+        }
+      })
 
-      // ✅ 直接读取 JSON 文件内容并解析为对象
-      const serverData = await fs.readFile(serverPath, 'utf-8')
-      this.server = JSON.parse(serverData)
-
-      const pathData = await fs.readFile(pathPath, 'utf-8')
-      this.path = JSON.parse(pathData)
+      this.server = JSON.parse(fs.readFileSync(resolve(SETTINGS_DIR, 'server.json'), 'utf-8'))
+      this.path = JSON.parse(fs.readFileSync(resolve(SETTINGS_DIR, 'path.json'), 'utf-8'))
 
       logger.info('[Setting] 配置加载完成')
     } catch (err: any) {
       logger.error(`[Setting] 初始化错误：${err.message}`)
-      throw err
     }
   }
 }
