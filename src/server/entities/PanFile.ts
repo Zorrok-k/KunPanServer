@@ -1,7 +1,7 @@
 import { Column, Entity, Index, PrimaryColumn } from 'typeorm'
 
 @Entity('PanFile')
-export class PanFile {
+export default class PanFile {
   // 主键 id
   @PrimaryColumn({ type: 'text', length: 255 })
   id: string = ''
@@ -10,7 +10,7 @@ export class PanFile {
   @Column({ type: 'text', length: 255 })
   hash: string = ''
 
-  // -1文件夹 0其他 1图片 2视频 3文档 4音频 5压缩包 创建索引
+  // -1文件夹 0其他 1图片 2视频 3音频 4文档 5压缩包 创建索引
   @Index()
   @Column({ type: 'integer' })
   type: number = 0
@@ -31,10 +31,6 @@ export class PanFile {
   @Column({ type: 'integer', default: 1 })
   status: number = 1
 
-  // 文件上传时间 单位应该为毫秒
-  @Column({ type: 'integer', default: 0 })
-  upload: number = 0
-
   // 文件创建时间 单位应该为毫秒
   @Column({ type: 'integer', default: 0 })
   create: number = 0
@@ -51,8 +47,12 @@ export class PanFile {
   @Column({ type: 'integer', default: 0 })
   download: number = 0
 
-  // 网盘路径
+  // 父目录
   @Index()
+  @Column({ type: 'text', length: 255 })
+  directory: string = ''
+
+  // 网盘相对路径
   @Column({ type: 'text', length: 255 })
   path: string = ''
 }

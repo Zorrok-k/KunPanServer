@@ -1,7 +1,7 @@
 import { app, ipcMain } from 'electron'
 import { electronApp, optimizer } from '@electron-toolkit/utils'
 import { WindowsManager } from './windows/index'
-import wins from './windows/options'
+import windows from './windows/options'
 import Settings from './settings'
 import Server from '../server/index'
 import AppTray from './utils/AppTray'
@@ -17,7 +17,7 @@ app.whenReady().then(async () => {
   })
 
   // 创建主窗口
-  WindowsManager.getInstance().newWindow(wins.main)
+  WindowsManager.getInstance().newWindow(windows.main)
   // 创建系统托盘
   AppTray.getInstance().init()
   // 读取配置文件

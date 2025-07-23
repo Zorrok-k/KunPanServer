@@ -2,11 +2,12 @@ import fs from 'fs'
 import { resolve } from 'path'
 import express from 'express'
 import multer from 'multer'
-import fileController from '../controllers/fileController'
+import FileController from '../controllers/FileController'
 import Settings from '../../main/settings'
 
 const router = express.Router()
 
+// multer 配置
 const storage = multer.diskStorage({
   destination: (req, _file, cb) => {
     // 从 req 中获取路径信息 path记得设置一下默认为root
@@ -28,8 +29,8 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage })
 
 // 文件路由
-router.get('/file/build', fileController.build)
-router.get('/file/read', fileController.read)
-router.post('/file/add', upload.array('normal'), fileController.add)
+router.get('/file/build', FileController.build)
+router.get('/file/read', FileController.read)
+router.post('/file/add', upload.array('normal'), FileController.add)
 
 export default router

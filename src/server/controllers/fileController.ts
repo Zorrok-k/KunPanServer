@@ -1,7 +1,11 @@
+import Server from '../index'
+import Settings from '../../main/settings'
 import PanFileServiceImpl from '../services/implements/PanFileServiceImpl'
 import { PanFileService } from '../services/PanFileService'
+import logger from '../utils/logger'
+import PanFile from '../entities/PanFile'
 
-class fileController {
+class FileController {
   // 依赖注入
   private panFileService: PanFileService
 
@@ -9,10 +13,23 @@ class fileController {
     this.panFileService = panFileService
   }
 
-  build = (_req: any, res: any, _next: any) => {
-    if (this.panFileService.buildFileData()) {
-      res.send('建立文件数据库')
-    }
+  build = async (_req: any, res: any, _next: any) => {
+    logger.info(`[PanFileService] 清除文件数据库`)
+    await Server.getInstance().Database.getRepository(PanFile).clear()
+    logger.info(`[PanFileService] 建立文件数据库  路径：${Settings.getInstance().server.root}`)
+    this.panFileService.buildFileData(Settings.getInstance().server.root).then((result) => {
+      if (result === true) {
+        res.status(200).json({
+          code: 200,
+          data: 'ok'
+        })
+      } else {
+        res.status(500).json({
+          code: 500,
+          message: '未知错误！'
+        })
+      }
+    })
   }
 
   read = (req: any, res: any, _next: any) => {
@@ -36,9 +53,9 @@ class fileController {
 
   add = (req: any, res: any, _next: any) => {
     if (this.panFileService.addFile(req.query.path, req.body.info)) {
-      res.status(201).json({
-        code: 201,
-        data: 'OK'
+      res.status(200).json({
+        code: 200,
+        data: 'ok'
       })
       return
     }
@@ -49,4 +66,4 @@ class fileController {
   }
 }
 
-export default new fileController(new PanFileServiceImpl())
+export default new FileController(new PanFileServiceImpl())

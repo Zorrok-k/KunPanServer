@@ -25,6 +25,7 @@
     "@electron-toolkit/utils": "^4.0.0",
     "better-sqlite3": "^11.10.0",
     "express": "^5.1.0",
+    "file-type": "^21.0.0",
     "multer": "^2.0.2",
     "nanoid": "^5.1.5",
     "typeorm": "^0.3.25",

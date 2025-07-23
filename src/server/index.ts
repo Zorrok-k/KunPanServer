@@ -2,7 +2,7 @@ import express from 'express'
 import router from './routes/index'
 import Settings from '../main/settings'
 import { DataSource } from 'typeorm'
-import { PanFile } from './entities/PanFile'
+import PanFile from './entities/PanFile'
 import logger from './utils/logger'
 
 export default class Server {
@@ -36,7 +36,8 @@ export default class Server {
       this.Database = new DataSource({
         type: 'better-sqlite3',
         entities: [PanFile],
-        database: Settings.getInstance().path.database
+        database: Settings.getInstance().path.database,
+        synchronize: true
       })
 
       this.Database.initialize()
