@@ -3,7 +3,7 @@ export interface PanFileService {
   buildFileData(root: string): Promise<boolean>
 
   // 读取当前路径下文件目录 分页查询
-  getFileDirectory(path: string, num: number, page: number): any
+  getFileDirectory(directory: string, num: number, page: number): Promise<boolean>
 
   // 上传文件
   addFile(path: string, info: []): boolean

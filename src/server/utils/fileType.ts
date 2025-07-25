@@ -8,10 +8,12 @@ import { fileTypeFromFile } from 'file-type'
 export async function getTypeNum(path: string): Promise<number> {
   try {
     const result = await fileTypeFromFile(path)
-
     if (!result) return 0
 
-    const { mime } = result
+    let mime = result.mime.toLowerCase().trim()
+
+    // 去除 MIME 中的参数（如 ;charset=binary, ; boundary=...）
+    mime = mime.split(';')[0].trim()
 
     // 1. 图片
     if (mime.startsWith('image/')) return 1
@@ -23,33 +25,65 @@ export async function getTypeNum(path: string): Promise<number> {
     if (mime.startsWith('audio/')) return 3
 
     // 4. 文档
-    const documentMimes = [
+    const documentMimes = new Set([
       'application/pdf',
-      'application/msword', // .doc
+
+      // Microsoft Office 新格式（OpenXML）
       'application/vnd.openxmlformats-officedocument.wordprocessingml.document', // .docx
-      'application/vnd.ms-excel', // .xls
       'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', // .xlsx
-      'application/vnd.ms-powerpoint', // .ppt
       'application/vnd.openxmlformats-officedocument.presentationml.presentation', // .pptx
-      'text/plain', // .txt
+
+      // Microsoft Office 旧格式（CFB 格式）
+      'application/x-cfb', // 用于 .doc, .xls, .ppt 等 CFB 格式的文件
+
+      // Microsoft Office 宏启用文件
+      'application/vnd.ms-word.document.macroenabled.12', // .docm
+      'application/vnd.ms-excel.sheet.macroenabled.12', // .xlsm
+      'application/vnd.ms-powerpoint.slideshow.macroenabled.12', // .ppsm
+      'application/vnd.ms-powerpoint.presentation.macroenabled.12', // .pptm
+
+      // OpenDocument 格式
       'application/vnd.oasis.opendocument.text', // .odt
-      'application/rtf' // .rtf
-    ]
-    if (documentMimes.includes(mime)) return 4
+      'application/vnd.oasis.opendocument.text-template', // .ott
+      'application/vnd.oasis.opendocument.spreadsheet', // .ods
+      'application/vnd.oasis.opendocument.spreadsheet-template', // .ots
+      'application/vnd.oasis.opendocument.presentation', // .odp
+      'application/vnd.oasis.opendocument.presentation-template', // .otp
+      'application/vnd.oasis.opendocument.graphics', // .odg
+      'application/vnd.oasis.opendocument.graphics-template', // .otg
+
+      // 文本与富文本
+      'text/plain', // .txt
+      'application/rtf', // .rtf
+
+      // ePub 电子书
+      'application/epub+zip',
+
+      // Visio
+      'application/vnd.visio', // .vsdx
+
+      // 3D 模型
+      'model/3mf' // .3mf
+    ])
+
+    if (documentMimes.has(mime)) return 4
 
     // 5. 压缩包
-    const archiveMimes = [
+    const archiveMimes = new Set([
       'application/zip',
       'application/x-rar-compressed',
       'application/x-7z-compressed',
       'application/x-tar',
-      'application/x-gzip'
-    ]
-    if (archiveMimes.includes(mime)) return 5
+      'application/x-gzip',
+      'application/gzip'
+    ])
 
-    // 未知类型
+    if (archiveMimes.has(mime)) return 5
+
+    // 其他未识别类型
     return 0
   } catch (error) {
+    console.warn(`[getTypeNum] 文件类型检测失败: ${path}`, error)
     return 0
   }
 }

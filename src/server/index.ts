@@ -4,6 +4,7 @@ import Settings from '../main/settings'
 import { DataSource } from 'typeorm'
 import PanFile from './entities/PanFile'
 import logger from './utils/logger'
+import cors from 'cors'
 
 export default class Server {
   Database: any
@@ -28,9 +29,6 @@ export default class Server {
     // 创建 Express 应用
     const app = express()
 
-    // 路由中间件
-    app.use('/api', router)
-
     try {
       // 初始化数据库
       this.Database = new DataSource({
@@ -45,6 +43,17 @@ export default class Server {
           console.log('\n✅ 数据库连接成功')
           // 启动服务器
           const serverConfig = Settings.getInstance().server
+
+          // 跨域中间件
+          app.use(
+            cors({
+              origin: ['http://localhost:5174']
+            })
+          )
+
+          // 路由中间件
+          app.use('/api', router)
+
           app.listen(serverConfig.port, () => {
             console.log('✅ Express 服务已启动')
             console.log(`主页：${serverConfig.host}:${serverConfig.port}/home`)

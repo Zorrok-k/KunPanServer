@@ -70,24 +70,43 @@ class PanFileServiceImpl implements PanFileService {
     }
   }
 
-  getFileDirectory = (path: string, num: number, page: number): any => {
-    // 计算分页参数
+  async getFileDirectory(directory: string, num: number, page: number): Promise<any> {
     const skip = (page - 1) * num
-    Server.getInstance()
-      .Database.getRepository(PanFile)
-      .createQueryBuilder()
-      .skip(skip)
-      .take(num)
-      .where('path = :path', { path: path })
-      .getRawMany()
-      .then((res: any) => {
-        logger.info(`[PanFileService] 查询 path：${path} 文件：\n${res}`)
-        return res
-      })
-      .catch((err: any) => {
-        logger.error(`[PanFileService] 发生错误：${err.message}`)
-        return false
-      })
+
+    try {
+      const result = await Server.getInstance()
+        .Database.getRepository(PanFile)
+        .createQueryBuilder()
+        .where('directory = :directory', { directory: directory })
+        .andWhere('status = :status', { status: 1 })
+        .orderBy('type', 'ASC')
+        .addOrderBy('name', 'ASC')
+        .skip(skip)
+        .take(num)
+        .getRawMany()
+
+      logger.info(`查询 path：${directory} 文件：`)
+      const simplified = result.map((item) => ({
+        id: item.PanFile_id,
+        hash: item.PanFile_hash,
+        type: item.PanFile_type,
+        name: item.PanFile_name,
+        suffix: item.PanFile_suffix,
+        size: item.PanFile_size,
+        status: item.PanFile_status,
+        create: item.PanFile_create,
+        update: item.PanFile_update,
+        read: item.PanFile_read,
+        download: item.PanFile_download,
+        directory: item.PanFile_directory,
+        path: item.PanFile_path
+      }))
+      console.log(simplified)
+      return simplified
+    } catch (err: any) {
+      logger.error(`[PanFileService] 发生错误：${err.message}`)
+      return false
+    }
   }
 
   addFile = (path: string, info: []): boolean => {

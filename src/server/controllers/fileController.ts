@@ -33,22 +33,26 @@ class FileController {
   }
 
   read = (req: any, res: any, _next: any) => {
-    const result = this.panFileService.getFileDirectory(
-      req.query.path,
-      req.query.num,
-      req.query.page
-    )
-    if (result == false) {
-      res.status(500).json({
-        code: 500,
-        message: '未知错误！'
+    this.panFileService
+      .getFileDirectory(req.query.path, req.query.num, req.query.page)
+      .then((result) => {
+        if (res == false) {
+          res.status(500).json({
+            code: 500,
+            message: '未知错误！'
+          })
+          return
+        } else {
+          res.status(200).json({
+            code: 200,
+            data: result
+          })
+        }
       })
-      return
-    }
-    res.status(200).json({
-      code: 200,
-      data: result
-    })
+      .catch((err) => {
+        logger.error(`[Route /files] 获取文件列表失败：${err.message}`)
+        res.status(500).json({ error: err.message })
+      })
   }
 
   add = (req: any, res: any, _next: any) => {
