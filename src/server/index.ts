@@ -5,6 +5,8 @@ import { DataSource } from 'typeorm'
 import PanFile from './entities/PanFile'
 import logger from './utils/logger'
 import cors from 'cors'
+import os from 'os'
+import path from 'path'
 
 export default class Server {
   Database: any
@@ -44,20 +46,30 @@ export default class Server {
           // 启动服务器
           const serverConfig = Settings.getInstance().server
 
+          const IPv4 = getLocalIPAddress()
+
           // 跨域中间件
           app.use(
             cors({
-              origin: ['http://localhost:5174']
+              origin: ['http://localhost:5272', 'http://192.168.31.229:5272']
             })
           )
+
+          // 设置静态资源目录
+          app.use(express.static('resources/web'))
+
+          app.get('/', (_req, res) => {
+            
+            res.sendFile(path.join(__dirname, '../resources/web/index.html'))
+          })
 
           // 路由中间件
           app.use('/api', router)
 
           app.listen(serverConfig.port, () => {
             console.log('✅ Express 服务已启动')
-            console.log(`主页：${serverConfig.host}:${serverConfig.port}/home`)
-            console.log(`Base：${serverConfig.host}:${serverConfig.port}/api\n`)
+            console.log(`主页：${IPv4}:${serverConfig.port}/home`)
+            console.log(`Base：${IPv4}:${serverConfig.port}/api\n`)
           })
         })
         .catch((err: any) => {
@@ -69,4 +81,19 @@ export default class Server {
       process.exit(1)
     }
   }
+}
+
+// 获取本机IP地址的通用函数
+function getLocalIPAddress(): string | undefined {
+  const interfaces = os.networkInterfaces()
+  for (const name of Object.keys(interfaces)) {
+    const nets = interfaces[name]
+    if (!nets) continue
+    for (const net of nets) {
+      if (!net.internal && net.family === 'IPv4') {
+        return net.address
+      }
+    }
+  }
+  return undefined
 }
