@@ -59,7 +59,17 @@ export default class Server {
           app.use(express.static('resources/web'))
 
           app.get('/', (_req, res) => {
-            
+            // 读取并修改config.js内容
+            const fs = require('fs')
+            const configPath = path.join(__dirname, '../resources/web/config.js')
+            let configContent = fs.readFileSync(configPath, 'utf-8')
+            const newBaseUrl = `http://${IPv4}:${serverConfig.port}`
+            configContent = configContent.replace(
+              /BASE_URL:\s*['"][^'"]*['"]/,
+              `BASE_URL: '${newBaseUrl}'`
+            )
+            fs.writeFileSync(configPath, configContent)
+
             res.sendFile(path.join(__dirname, '../resources/web/index.html'))
           })
 
